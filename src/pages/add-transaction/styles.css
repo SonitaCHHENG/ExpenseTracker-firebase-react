@@ -1,0 +1,103 @@
+.page-content--centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+}
+
+.add-transaction-card {
+  width: min(100%, 760px);
+}
+
+.page-card__header--align-left {
+  justify-content: flex-start;
+}
+
+.transaction-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-group label {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.field-group input {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--card-alt);
+  border-radius: 14px;
+  padding: 14px 16px;
+  font: inherit;
+  color: var(--text);
+}
+
+.field-group input:focus {
+  outline: none;
+  border-color: rgba(124, 58, 237, 0.42);
+  box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.12);
+  background: var(--card);
+}
+
+.type-toggle-group {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.type-toggle {
+  border: 1px solid var(--border);
+  background: var(--card-alt);
+  color: var(--text-secondary);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.type-toggle--active {
+  color: #fff;
+  border-color: transparent;
+}
+
+.type-toggle--income.type-toggle--active {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.type-toggle--expense.type-toggle--active {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+.submit-button {
+  border: none;
+  border-radius: 16px;
+  padding: 15px 18px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 20px 28px rgba(124, 58, 237, 0.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 24px 32px rgba(124, 58, 237, 0.35);
+}
+
+@media (max-width: 560px) {
+  .type-toggle-group {
+    grid-template-columns: 1fr;
+  }
+}

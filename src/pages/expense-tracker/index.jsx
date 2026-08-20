@@ -156,15 +156,19 @@ const Sidebar = ({ profilePhoto, profileName, onSignOut, isMobileOpen, onClose }
    <aside className={`sidebar ${isMobileOpen ? "sidebar--open" : ""}`}>
      <div className="sidebar__content">
        <div className="sidebar__profile">
-         <img
-           src={profilePhoto || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80"}
-           alt="User avatar"
-         />
-         <div>
-           <h2>{profileName}</h2>
-           <span>Personal Account</span>
-         </div>
-       </div>
+        {profilePhoto && (
+          <img
+            src={profilePhoto}
+            alt="User avatar"
+          />
+        )}
+
+       <div>
+
+    <h2>{profileName}</h2>
+    <span>Personal Account</span>
+  </div>
+</div>
 
        <nav className="sidebar__nav" aria-label="Sidebar navigation">
          {navItems.map(({ label, icon, path }) => (
@@ -211,11 +215,13 @@ const Header = ({ profilePhoto, profileName, today, onMenuToggle }) => (
        <Icon name="bell" />
      </button>
      <span className="date-pill">{today}</span>
-     <img
-       className="topbar__avatar"
-       src={profilePhoto || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80"}
-       alt={profileName}
-     />
+     {profilePhoto && (
+  <img
+        className="topbar__avatar"
+        src={profilePhoto}
+        alt={profileName}
+      />
+    )}
    </div>
  </header>
 );
@@ -376,8 +382,12 @@ export const ExpenseTracker = () => {
  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
  const { balance, expense, income } = transactionTotals;
- const profileName = auth.currentUser?.displayName || (name && name !== "Guest" ? name : "Sonita Chheng");
- const profileAvatar = auth.currentUser?.photoURL || profilePhoto || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80";
+ const profileName =
+  auth.currentUser?.displayName ||
+  (name && name !== "Guest" ? name : "Sonita Chheng");
+
+const profileAvatar =
+  auth.currentUser?.photoURL || profilePhoto || null;
  const today = new Date().toLocaleDateString(undefined, {
    month: "short",
    day: "numeric",
@@ -423,20 +433,20 @@ export const ExpenseTracker = () => {
  return (
    <div className="finance-shell">
      <Sidebar
-       profilePhoto={profilePhoto}
-       profileName={profileName}
-       onSignOut={signUserOut}
-       isMobileOpen={mobileSidebarOpen}
-       onClose={() => setMobileSidebarOpen(false)}
-     />
+  profilePhoto={profileAvatar}
+  profileName={profileName}
+  onSignOut={signUserOut}
+  isMobileOpen={mobileSidebarOpen}
+  onClose={() => setMobileSidebarOpen(false)}
+  />
 
      <div className="main-panel">
        <Header
-         profilePhoto={profilePhoto}
-         profileName={profileName}
-         today={today}
-         onMenuToggle={() => setMobileSidebarOpen((prev) => !prev)}
-       />
+  profilePhoto={profileAvatar}
+  profileName={profileName}
+  today={today}
+  onMenuToggle={() => setMobileSidebarOpen((prev) => !prev)}
+/>
 
        <main className="dashboard-content">
          <section className="summary-grid">

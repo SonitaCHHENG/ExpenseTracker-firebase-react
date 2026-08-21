@@ -1,17 +1,16 @@
 import { useState } from "react";
-import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { Sidebar } from "../../components/Sidebar";
 import { auth } from "../../config/firebase-config";
 import { useTheme } from "../../context/ThemeContext";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
+import { useSignOut } from "../../hooks/useSignOut"; // 1. IMPORT HOOK HERE
 import "./styles.css";
 
 export const Settings = () => {
-  const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { name, profilePhoto } = useGetUserInfo();
+  const { logOut } = useSignOut(); // 2. EXTRACT LOGOUT FUNCTION HERE
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const parsedAuth = (() => {
@@ -25,18 +24,7 @@ export const Settings = () => {
   const currentUserEmail = auth.currentUser?.email || parsedAuth?.email || "";
   const profileName = auth.currentUser?.displayName || (name && name !== "Guest" ? name : "User");
   
-  // Use actual user profile photo from Firebase Auth or local storage state without hardcoded static fallback
   const profileAvatar = auth.currentUser?.photoURL || profilePhoto || null;
-
-  const signUserOut = async () => {
-    try {
-      await signOut(auth);
-      localStorage.removeItem("auth");
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
-  };
 
   return (
     <div className="page-shell">
@@ -110,7 +98,8 @@ export const Settings = () => {
               <div className="settings-card__header">
                 <h3>Account</h3>
               </div>
-              <button type="button" className="settings-signout" onClick={signUserOut}>
+              {/* 3. CONNECT LOGOUT HOOK FUNCTION TO BUTTON */}
+              <button type="button" className="settings-signout" onClick={logOut}>
                 Sign Out
               </button>
             </article>

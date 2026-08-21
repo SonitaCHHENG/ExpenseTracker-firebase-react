@@ -1,7 +1,7 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
+import { Link, useLocation } from "react-router-dom";
 import { auth } from "../../config/firebase-config";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
+import { useSignOut } from "../../hooks/useSignOut";
 import "./styles.css";
 
 const navItems = [
@@ -87,25 +87,20 @@ export const Sidebar = ({
   onClose = () => {},
 }) => {
   const { name, profilePhoto } = useGetUserInfo();
-
+  const { logOut } = useSignOut();
   const location = useLocation();
-  const navigate = useNavigate();
 
+  // Dynamic user display name without hardcoded personal names
   const profileName =
     auth.currentUser?.displayName ||
-    (name && name !== "Guest" ? name : "Sonita Chheng");
+    (name && name !== "Guest" ? name : "User");
 
   const profileAvatar =
     auth.currentUser?.photoURL || profilePhoto;
 
-  const signUserOut = async () => {
-    try {
-      await signOut(auth);
-      localStorage.removeItem("auth");
-      navigate("/");
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
+  const handleSignOut = () => {
+    onClose();
+    logOut();
   };
 
   return (
@@ -125,11 +120,30 @@ export const Sidebar = ({
       >
         <div className="sidebar__profile-block">
           <div className="sidebar__profile">
-            {profileAvatar && (
+            {profileAvatar ? (
               <img
                 src={profileAvatar}
                 alt="User avatar"
               />
+            ) : (
+              <div
+                className="avatar-placeholder"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  backgroundColor: "#4f46e5",
+                  color: "#fff",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: "bold",
+                  fontSize: "1rem",
+                  flexShrink: 0,
+                }}
+              >
+                {profileName.charAt(0).toUpperCase()}
+              </div>
             )}
 
             <div className="sidebar__identity">
@@ -141,7 +155,7 @@ export const Sidebar = ({
           <button
             type="button"
             className="sidebar__logout"
-            onClick={signUserOut}
+            onClick={handleSignOut}
           >
             <Icon
               name="logout"

@@ -1,84 +1,66 @@
-import { useEffect, useState } from 'react';
-import {
-    query,
-    collection,
-    where,
-    orderBy,
-    onSnapshot
-} from 'firebase/firestore';
-import { db } from '../config/firebase-config';
+import { useEffect, useState } from "react";
+import { query, collection, where, orderBy, onSnapshot } from "firebase/firestore";
+import { db } from "../config/firebase-config";
 import { useGetUserInfo } from "./useGetUserInfo";
 
 export const useGetTransactions = () => {
-    const [transactions, setTransactions] = useState([]);
-    const [transactionTotals, setTransactionTotals] = useState({
-        balance: 0.0,
-        income: 0.0,
-        expense: 0.0
-    });
+  const [transactions, setTransactions] = useState([]);
+  const [transactionTotals, setTransactionTotals] = useState({
+    balance: 0.0,
+    income: 0.0,
+    expenses: 0.0,
+  });
 
-    const transactionsCollectionRef = collection(db, "transactions");
-    const { userID } = useGetUserInfo();
+  const { userID, isAuth } = useGetUserInfo();
+  const transactionCollectionRef = collection(db, "transactions");
 
-    useEffect(() => {
-        // If there is no logged-in user, clear transactions and stop query execution
-        if (!userID) {
-            setTransactions([]);
-            setTransactionTotals({ balance: 0.0, income: 0.0, expense: 0.0 });
-            return;
-        }
+  useEffect(() => {
+    // SECURITY GUARD: Do NOT query Firestore if user is not authenticated or userID is missing
+    if (!isAuth || !userID) {
+      setTransactions([]);
+      setTransactionTotals({ balance: 0.0, income: 0.0, expenses: 0.0 });
+      return;
+    }
 
-        let unsubscribe;
+    let unsubscribe;
+    try {
+      const queryTransactions = query(
+        transactionCollectionRef,
+        where("userID", "==", userID),
+        orderBy("createdAt")
+      );
 
-        try {
-            const queryTransactions = query(
-                transactionsCollectionRef,
-                where("userID", "==", userID),
-                orderBy("createdAt")
-            );
+      unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
+        let docs = [];
+        let totalIncome = 0;
+        let totalExpenses = 0;
 
-            unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
-                let docs = [];
-                let totalIncome = 0;
-                let totalExpense = 0;
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const id = doc.id;
 
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const id = doc.id;
+          docs.push({ ...data, id });
 
-                    docs.push({
-                        ...data,
-                        id
-                    });
+          if (data.transactionType === "expense") {
+            totalExpenses += Number(data.transactionAmount);
+          } else {
+            totalIncome += Number(data.transactionAmount);
+          }
+        });
 
-                    if (data.transactionType === "expense") {
-                        totalExpense += Number(data.transactionAmount || 0);
-                    } else {
-                        totalIncome += Number(data.transactionAmount || 0);
-                    }
-                });
+        setTransactions(docs);
+        setTransactionTotals({
+          balance: totalIncome - totalExpenses,
+          expenses: totalExpenses,
+          income: totalIncome,
+        });
+      });
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
 
-                setTransactions(docs);
-                setTransactionTotals({
-                    balance: totalIncome - totalExpense,
-                    expense: totalExpense,
-                    income: totalIncome
-                });
-            }, (error) => {
-                console.error("Firestore error:", error);
-            });
+    return () => unsubscribe && unsubscribe();
+  }, [userID, isAuth]);
 
-        } catch (err) {
-            console.error(err);
-        }
-
-        return () => {
-            if (unsubscribe) unsubscribe();
-        };
-    }, [userID]); // Re-subscribes whenever the active user changes or logs out
-
-    return {
-        transactions,
-        transactionTotals
-    };
+  return { transactions, transactionTotals };
 };

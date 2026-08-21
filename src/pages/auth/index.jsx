@@ -4,9 +4,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword 
 } from "firebase/auth";
-import { Navigate, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { auth, provider } from "../../config/firebase-config";
-import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import "./styles.css";
 
 const FeatureIcon = ({ children, className = "" }) => (
@@ -25,15 +24,12 @@ const GoogleIcon = () => (
 export const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuth, loading: authLoading } = useGetUserInfo();
-  const firebaseUser = auth.currentUser;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
-  // Target location to navigate to after authentication
   const redirectPath = location.state?.from?.pathname || "/expense-tracker";
 
   const saveAuthAndRedirect = (user, displayName = null) => {
@@ -67,7 +63,6 @@ export const Auth = () => {
       }
     } catch (err) {
       console.error("Authentication failed:", err.code, err.message);
-
       if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
         alert("Invalid email or password. If you don't have an account yet, click 'Sign Up' below.");
       } else if (err.code === "auth/email-already-in-use") {
@@ -101,11 +96,7 @@ export const Auth = () => {
     }
   };
 
-  // Skip login screen if user is already authenticated
-  if (!authLoading && (isAuth || firebaseUser)) {
-    return <Navigate to={redirectPath} replace />;
-  }
-
+  // EVERY user sees the login form first—no automatic redirect check here!
   return (
     <div className="login-page">
       <div className="login-shell">

@@ -2,7 +2,6 @@ import { auth } from "../../config/firebase-config";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import "./styles.css";
 
-
 const Icon = ({ name, className = "" }) => {
   const commonProps = {
     viewBox: "0 0 24 24",
@@ -39,10 +38,10 @@ const Icon = ({ name, className = "" }) => {
 export const Header = ({ onMenuToggle }) => {
   const { name, profilePhoto } = useGetUserInfo();
 
+  // Dynamic user display name without hardcoding personal names
   const profileName =
     auth.currentUser?.displayName ||
-    (name && name !== "Guest" ? name : "Sonita Chheng");
-
+    (name && name !== "Guest" ? name : "User");
 
   const profileAvatar =
     auth.currentUser?.photoURL || profilePhoto;
@@ -82,13 +81,31 @@ export const Header = ({ onMenuToggle }) => {
 
         <span className="date-pill">{today}</span>
 
-
-        {profileAvatar && (
+        {/* Display profile avatar or fallback initial badge */}
+        {profileAvatar ? (
           <img
             className="topbar__avatar"
             src={profileAvatar}
             alt={profileName}
           />
+        ) : (
+          <div
+            className="avatar-placeholder"
+            style={{
+              width: "36px",
+              height: "36px",
+              borderRadius: "50%",
+              backgroundColor: "#4f46e5",
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+            }}
+          >
+            {profileName.charAt(0).toUpperCase()}
+          </div>
         )}
       </div>
     </header>

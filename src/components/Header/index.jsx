@@ -42,8 +42,11 @@ export const Header = ({ onMenuToggle }) => {
     auth.currentUser?.displayName ||
     (name && name !== "Guest" ? name : "Sonita Chheng");
 
+<<<<<<< Updated upstream
   // Use the user's real profile picture only.
   // No default/automatic picture.
+=======
+>>>>>>> Stashed changes
   const profileAvatar =
     auth.currentUser?.photoURL || profilePhoto;
 
@@ -82,7 +85,10 @@ export const Header = ({ onMenuToggle }) => {
 
         <span className="date-pill">{today}</span>
 
+<<<<<<< Updated upstream
         {/* Only show avatar if the user has a profile picture */}
+=======
+>>>>>>> Stashed changes
         {profileAvatar && (
           <img
             className="topbar__avatar"

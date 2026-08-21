@@ -60,8 +60,20 @@ export const Auth = () => {
         saveAuthAndRedirect(userCredential.user);
       }
     } catch (err) {
-      console.error("Authentication failed:", err.message);
-      alert(err.message);
+      console.error("Authentication failed:", err.code, err.message);
+
+      // Clean user-friendly error messages
+      if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
+        alert("Invalid email or password. If you don't have an account yet, click 'Sign Up' below.");
+      } else if (err.code === "auth/email-already-in-use") {
+        alert("An account with this email already exists. Please Sign In instead.");
+      } else if (err.code === "auth/weak-password") {
+        alert("Password should be at least 6 characters long.");
+      } else if (err.code === "auth/too-many-requests") {
+        alert("Too many failed attempts. Please try again later.");
+      } else {
+        alert("Authentication failed. Please check your network or try again.");
+      }
     } finally {
       setLoading(false);
     }

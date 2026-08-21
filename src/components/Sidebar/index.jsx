@@ -91,20 +91,12 @@ export const Sidebar = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-
   const profileName =
     auth.currentUser?.displayName ||
     (name && name !== "Guest" ? name : "Sonita Chheng");
 
-  // Get the user's real profile picture.
-  // No automatic/default picture is used.
   const profileAvatar =
     auth.currentUser?.photoURL || profilePhoto;
-
-  const profileName = auth.currentUser?.displayName || (name && name !== "Guest" ? name : "Sonita Chheng");
-  const profileAvatar =
-  auth.currentUser?.photoURL || profilePhoto;
-
 
   const signUserOut = async () => {
     try {
@@ -132,11 +124,7 @@ export const Sidebar = ({
         }`}
       >
         <div className="sidebar__profile-block">
-
           <div className="sidebar__profile">
-
-
-            {/* Only show the picture if the user actually has one */}
             {profileAvatar && (
               <img
                 src={profileAvatar}
@@ -144,19 +132,10 @@ export const Sidebar = ({
               />
             )}
 
-
-            {profileAvatar && (
-  <img
-    src={profileAvatar}
-    alt="User avatar"
-  />
-)}
-
             <div className="sidebar__identity">
               <h2>{profileName}</h2>
               <span>Personal Account</span>
             </div>
-
           </div>
 
           <button
@@ -170,7 +149,6 @@ export const Sidebar = ({
             />
             <span>Sign Out</span>
           </button>
-
         </div>
 
         <nav

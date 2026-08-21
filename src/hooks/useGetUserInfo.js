@@ -17,7 +17,7 @@ export const useGetUserInfo = () => {
       const cleanProfilePhoto = profilePhoto && !profilePhoto.includes("unsplash.com") ? profilePhoto : null;
 
       return { name, profilePhoto: cleanProfilePhoto, userID, isAuth };
-    } catch (err) {
+    } catch {
       return { name: 'Guest', profilePhoto: null, userID: null, isAuth: false };
     }
   });
@@ -37,7 +37,6 @@ export const useGetUserInfo = () => {
         setUserInfo(updatedUser);
         localStorage.setItem("auth", JSON.stringify(updatedUser));
       } else {
-        // Clear stale session if user is signed out in Firebase
         const guestUser = { name: 'Guest', profilePhoto: null, userID: null, isAuth: false };
         setUserInfo(guestUser);
         localStorage.removeItem("auth");

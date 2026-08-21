@@ -13,12 +13,20 @@ export const Settings = () => {
   const { theme, setTheme } = useTheme();
   const { name, profilePhoto } = useGetUserInfo();
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
   const parsedAuth = (() => {
-    try { return JSON.parse(localStorage.getItem("auth") || "null"); } catch { return null; }
+    try { 
+      return JSON.parse(localStorage.getItem("auth") || "null"); 
+    } catch { 
+      return null; 
+    }
   })();
-  const currentUserEmail = auth.currentUser?.email || parsedAuth?.email || "sonita@example.com";
-  const profileName = auth.currentUser?.displayName || (name && name !== "Guest" ? name : "Sonita Chheng");
-  const profileAvatar = auth.currentUser?.photoURL || profilePhoto || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80";
+
+  const currentUserEmail = auth.currentUser?.email || parsedAuth?.email || "";
+  const profileName = auth.currentUser?.displayName || (name && name !== "Guest" ? name : "User");
+  
+  // Use actual user profile photo from Firebase Auth or local storage state without hardcoded static fallback
+  const profileAvatar = auth.currentUser?.photoURL || profilePhoto || null;
 
   const signUserOut = async () => {
     try {
@@ -49,10 +57,24 @@ export const Settings = () => {
               </div>
 
               <div className="profile-box">
-                <img
-                  src={profileAvatar}
-                  alt="Profile"
-                />
+                {profileAvatar ? (
+                  <img src={profileAvatar} alt="Profile" />
+                ) : (
+                  <div className="avatar-placeholder" style={{
+                    width: "50px",
+                    height: "50px",
+                    borderRadius: "50%",
+                    backgroundColor: "#4f46e5",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: "bold",
+                    fontSize: "1.2rem"
+                  }}>
+                    {profileName.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div>
                   <strong>{profileName}</strong>
                   <span>{currentUserEmail}</span>

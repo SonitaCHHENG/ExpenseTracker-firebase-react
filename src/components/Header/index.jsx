@@ -2,6 +2,7 @@ import { auth } from "../../config/firebase-config";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import "./styles.css";
 
+
 const Icon = ({ name, className = "" }) => {
   const commonProps = {
     viewBox: "0 0 24 24",

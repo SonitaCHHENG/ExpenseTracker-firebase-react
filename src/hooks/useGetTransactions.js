@@ -10,9 +10,7 @@ import { db } from '../config/firebase-config';
 import { useGetUserInfo } from "./useGetUserInfo";
 
 export const useGetTransactions = () => {
-
     const [transactions, setTransactions] = useState([]);
-
     const [transactionTotals, setTransactionTotals] = useState({
         balance: 0.0,
         income: 0.0,
@@ -22,7 +20,14 @@ export const useGetTransactions = () => {
     const transactionsCollectionRef = collection(db, "transactions");
     const { userID } = useGetUserInfo();
 
-    const getTransactions = async () => {
+    useEffect(() => {
+        // If there is no logged-in user, clear transactions and stop query execution
+        if (!userID) {
+            setTransactions([]);
+            setTransactionTotals({ balance: 0.0, income: 0.0, expense: 0.0 });
+            return;
+        }
+
         let unsubscribe;
 
         try {
@@ -33,13 +38,11 @@ export const useGetTransactions = () => {
             );
 
             unsubscribe = onSnapshot(queryTransactions, (snapshot) => {
-
                 let docs = [];
                 let totalIncome = 0;
                 let totalExpense = 0;
 
                 snapshot.forEach((doc) => {
-
                     const data = doc.data();
                     const id = doc.id;
 
@@ -49,31 +52,30 @@ export const useGetTransactions = () => {
                     });
 
                     if (data.transactionType === "expense") {
-                        totalExpense += Number(data.transactionAmount);
+                        totalExpense += Number(data.transactionAmount || 0);
                     } else {
-                        totalIncome += Number(data.transactionAmount);
+                        totalIncome += Number(data.transactionAmount || 0);
                     }
                 });
 
                 setTransactions(docs);
-
                 setTransactionTotals({
                     balance: totalIncome - totalExpense,
                     expense: totalExpense,
                     income: totalIncome
                 });
+            }, (error) => {
+                console.error("Firestore error:", error);
             });
 
         } catch (err) {
             console.error(err);
         }
 
-        return () => unsubscribe();
-    };
-
-    useEffect(() => {
-        getTransactions();
-    }, []);
+        return () => {
+            if (unsubscribe) unsubscribe();
+        };
+    }, [userID]); // Re-subscribes whenever the active user changes or logs out
 
     return {
         transactions,

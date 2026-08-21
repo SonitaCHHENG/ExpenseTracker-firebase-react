@@ -90,7 +90,7 @@ export const Sidebar = ({
 
   const location = useLocation();
   const navigate = useNavigate();
-<<<<<<< Updated upstream
+
 
   const profileName =
     auth.currentUser?.displayName ||
@@ -100,11 +100,11 @@ export const Sidebar = ({
   // No automatic/default picture is used.
   const profileAvatar =
     auth.currentUser?.photoURL || profilePhoto;
-=======
+
   const profileName = auth.currentUser?.displayName || (name && name !== "Guest" ? name : "Sonita Chheng");
   const profileAvatar =
   auth.currentUser?.photoURL || profilePhoto;
->>>>>>> Stashed changes
+
 
   const signUserOut = async () => {
     try {
@@ -134,7 +134,7 @@ export const Sidebar = ({
         <div className="sidebar__profile-block">
 
           <div className="sidebar__profile">
-<<<<<<< Updated upstream
+
 
             {/* Only show the picture if the user actually has one */}
             {profileAvatar && (
@@ -144,14 +144,14 @@ export const Sidebar = ({
               />
             )}
 
-=======
+
             {profileAvatar && (
   <img
     src={profileAvatar}
     alt="User avatar"
   />
 )}
->>>>>>> Stashed changes
+
             <div className="sidebar__identity">
               <h2>{profileName}</h2>
               <span>Personal Account</span>

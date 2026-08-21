@@ -33,9 +33,12 @@ export const Auth = () => {
   const [isSignUp, setIsSignUp] = useState(false);
 
   const saveAuthAndRedirect = (user, displayName = null) => {
+    // Extract name before @ symbol for email logins if displayName is absent
+    const defaultName = user.email ? user.email.split("@")[0] : "User";
+
     const authInfo = {
       userID: user.uid,
-      name: displayName || user.displayName || user.email,
+      name: user.displayName || displayName || defaultName,
       profilePhoto: user.photoURL || null,
       isAuth: true,
     };
@@ -62,7 +65,6 @@ export const Auth = () => {
     } catch (err) {
       console.error("Authentication failed:", err.code, err.message);
 
-      // Clean user-friendly error messages
       if (err.code === "auth/invalid-credential" || err.code === "auth/user-not-found" || err.code === "auth/wrong-password") {
         alert("Invalid email or password. If you don't have an account yet, click 'Sign Up' below.");
       } else if (err.code === "auth/email-already-in-use") {

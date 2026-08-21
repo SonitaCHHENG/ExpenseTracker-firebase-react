@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword 
 } from "firebase/auth";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import { auth, provider } from "../../config/firebase-config";
 import { useGetUserInfo } from "../../hooks/useGetUserInfo";
 import "./styles.css";
@@ -24,7 +24,8 @@ const GoogleIcon = () => (
 
 export const Auth = () => {
   const navigate = useNavigate();
-  const { isAuth } = useGetUserInfo();
+  const location = useLocation();
+  const { isAuth, loading: authLoading } = useGetUserInfo();
   const firebaseUser = auth.currentUser;
 
   const [email, setEmail] = useState("");
@@ -32,8 +33,10 @@ export const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 
+  // Target location to navigate to after authentication
+  const redirectPath = location.state?.from?.pathname || "/expense-tracker";
+
   const saveAuthAndRedirect = (user, displayName = null) => {
-    // Extract name before @ symbol for email logins if displayName is absent
     const defaultName = user.email ? user.email.split("@")[0] : "User";
 
     const authInfo = {
@@ -43,7 +46,7 @@ export const Auth = () => {
       isAuth: true,
     };
     localStorage.setItem("auth", JSON.stringify(authInfo));
-    navigate("/expense-tracker");
+    navigate(redirectPath, { replace: true });
   };
 
   const handleEmailAuth = async (e) => {
@@ -98,8 +101,9 @@ export const Auth = () => {
     }
   };
 
-  if (isAuth || firebaseUser) {
-    return <Navigate to="/expense-tracker" replace />;
+  // Skip login screen if user is already authenticated
+  if (!authLoading && (isAuth || firebaseUser)) {
+    return <Navigate to={redirectPath} replace />;
   }
 
   return (

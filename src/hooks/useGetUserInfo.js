@@ -3,6 +3,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../config/firebase-config';
 
 export const useGetUserInfo = () => {
+  const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState(() => {
     try {
       const raw = localStorage.getItem("auth");
@@ -41,10 +42,11 @@ export const useGetUserInfo = () => {
         setUserInfo(guestUser);
         localStorage.removeItem("auth");
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  return userInfo;
+  return { ...userInfo, loading };
 };

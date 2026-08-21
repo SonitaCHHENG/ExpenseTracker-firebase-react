@@ -21,6 +21,7 @@ const Icon = ({ name, className = "" }) => {
           <path d="M4 7h16M4 12h16M4 17h16" />
         </svg>
       );
+
     case "bell":
       return (
         <svg {...commonProps}>
@@ -28,6 +29,7 @@ const Icon = ({ name, className = "" }) => {
           <path d="M10 20a2 2 0 0 0 4 0" />
         </svg>
       );
+
     default:
       return null;
   }
@@ -35,8 +37,16 @@ const Icon = ({ name, className = "" }) => {
 
 export const Header = ({ onMenuToggle }) => {
   const { name, profilePhoto } = useGetUserInfo();
-  const profileName = auth.currentUser?.displayName || (name && name !== "Guest" ? name : "Sonita Chheng");
-  const profileAvatar = auth.currentUser?.photoURL || profilePhoto || "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=120&q=80";
+
+  const profileName =
+    auth.currentUser?.displayName ||
+    (name && name !== "Guest" ? name : "Sonita Chheng");
+
+  // Use the user's real profile picture only.
+  // No default/automatic picture.
+  const profileAvatar =
+    auth.currentUser?.photoURL || profilePhoto;
+
   const today = new Date().toLocaleDateString(undefined, {
     month: "short",
     day: "numeric",
@@ -46,7 +56,12 @@ export const Header = ({ onMenuToggle }) => {
   return (
     <header className="topbar">
       <div className="topbar__left">
-        <button type="button" className="menu-button" aria-label="Open menu" onClick={onMenuToggle}>
+        <button
+          type="button"
+          className="menu-button"
+          aria-label="Open menu"
+          onClick={onMenuToggle}
+        >
           <Icon name="menu" />
         </button>
 
@@ -57,15 +72,24 @@ export const Header = ({ onMenuToggle }) => {
       </div>
 
       <div className="topbar__right">
-        <button type="button" className="icon-button" aria-label="Notifications">
+        <button
+          type="button"
+          className="icon-button"
+          aria-label="Notifications"
+        >
           <Icon name="bell" />
         </button>
+
         <span className="date-pill">{today}</span>
-        <img
-          className="topbar__avatar"
-          src={profileAvatar}
-          alt={profileName}
-        />
+
+        {/* Only show avatar if the user has a profile picture */}
+        {profileAvatar && (
+          <img
+            className="topbar__avatar"
+            src={profileAvatar}
+            alt={profileName}
+          />
+        )}
       </div>
     </header>
   );

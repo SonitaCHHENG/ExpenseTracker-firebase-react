@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/ExpenseTracker-firebase-react/static/css/main.3fd71c42.css",
+    "main.js": "/ExpenseTracker-firebase-react/static/js/main.3227d7f1.js",
+    "index.html": "/ExpenseTracker-firebase-react/index.html",
+    "main.3fd71c42.css.map": "/ExpenseTracker-firebase-react/static/css/main.3fd71c42.css.map",
+    "main.3227d7f1.js.map": "/ExpenseTracker-firebase-react/static/js/main.3227d7f1.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.3fd71c42.css",
+    "static/js/main.3227d7f1.js"
+  ]
+}
